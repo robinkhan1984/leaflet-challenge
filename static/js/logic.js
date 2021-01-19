@@ -1,6 +1,4 @@
 
-
-
 var myMap = L.map("map", {
     center: [0, 0],
     zoom: 2.2
@@ -16,18 +14,21 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 }).addTo(myMap);
 
 // Grabbing our GeoJSON data..
-var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
+// var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
+var link = "/static/data/all_week.geojson"
 
-d3.json(link).then((data) => {
+// d3.json(link).then((data) => {
+//     console.log(data);
+//     var geoJsonLayer = L.geoJSON(data);
+//     geoJsonLayer.addTo(myMap);
+// });
+
+d3.json(link, function (json) {
+    var data = json.features;
     console.log(data);
-    var geoJsonLayer = L.geoJSON(data)
+    var geoJsonLayer = L.geoJSON(data);
     geoJsonLayer.addTo(myMap);
 });
-
-// d3.json(link, function (json) {
-//     var alldata = json.features;
-//     console.log(alldata);
-// )};
 
 
 
