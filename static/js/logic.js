@@ -26,8 +26,31 @@ var link = "/static/data/all_week.geojson"
 d3.json(link, function (json) {
     var data = json.features;
     console.log(data);
-    var geoJsonLayer = L.geoJSON(data);
-    geoJsonLayer.addTo(myMap);
+    var geoJsonLayer =   L.geoJson(data, {
+      // Changing to circles 
+      pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {
+          radius: (feature.properties.mag)*5,
+          color: 'blue'
+        });
+      },
+      // Called on each feature
+      onEachFeature: function(feature, layer) {
+
+        layer.bindPopup("<h1>" + feature.geometry.coordinates + "</h1> <hr> <h2>" + feature.properties.mag + "</h2>");
+  
+      }
+    }).addTo(myMap);
+    
+    
+ 
+    
+    
+    
+    
+    
+    
+  
 });
 
 
