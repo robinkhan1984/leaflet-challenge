@@ -10,18 +10,13 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/streets-v11",
-  accessToken: "pk.eyJ1Ijoicm9iaW5raGFuMTk4NCIsImEiOiJja2lzMmR0bXcwZXllMnhxamNxcmFneGtsIn0.ycbPjsgHA2IixraQFPlPJA"
+  accessToken: API_KEY
 }).addTo(myMap);
 
 // Grabbing our GeoJSON data..
 // var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
 var link = "/static/data/all_week.geojson"
 
-// d3.json(link).then((data) => {
-//     console.log(data);
-//     var geoJsonLayer = L.geoJSON(data);
-//     geoJsonLayer.addTo(myMap);
-// });
 
 d3.json(link, function (json) {
     var data = json.features;
@@ -41,17 +36,40 @@ d3.json(link, function (json) {
   
       }
     }).addTo(myMap);
-    
-    
- 
-    
-    
-    
-    
-    
-    
-  
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (myMap) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 1, 2, 3, 4, 5, 6, 7],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < mag.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
+            mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(myMap);
 
 
 
