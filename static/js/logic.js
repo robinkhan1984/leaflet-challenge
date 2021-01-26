@@ -18,15 +18,35 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 var link = "/static/data/all_week.geojson"
 
 
+
 d3.json(link, function (json) {
     var data = json.features;
     console.log(data);
+
+    function fillCircleColor(mag) {
+      switch (true) {
+      case mag > 5: 
+        return "#0c2c84";
+      case mag > 4: 
+        return "#1d91c0";
+      case mag > 3: 
+        return "#41b6c4";
+      case mag > 2:
+        return "#7fcdbb";
+      case mag > 1: 
+        return "#c7e9b4";
+      case mag > 0: 
+        return "#F4A460";        
+    };
+  }
+
     var geoJsonLayer =   L.geoJson(data, {
       // Changing to circles 
       pointToLayer: function(feature, latlng) {
         return new L.CircleMarker(latlng, {
           radius: (feature.properties.mag)*5,
-          color: 'blue'
+          color: fillCircleColor(feature.properties.mag),
+          fillOpacity:1
         });
       },
       // Called on each feature
@@ -37,39 +57,29 @@ d3.json(link, function (json) {
       }
     }).addTo(myMap);
 
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function (myMap) {
-
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 1, 2, 3, 4, 5, 6, 7],
-        labels = [];
-
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (var i = 0; i < mag.length; i++) {
+    // add legend to map
+    var legend = L.control({position: 'bottomright'});
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'info legend'),
+        magnitude = [0, 1, 2, 3, 4, 5],
+        labels = ["<b>Magnitude</b>"];
+      // loop through our density intervals and generate a label with a colored square for each interval
+      for (var i = 0; i < magnitude.length; i++) {
         div.innerHTML +=
-            '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
-            mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
-    }
+          labels.push('<i style="background:'
+          + fillCircleColor(magnitude[i] + 1) 
+          + '">' 
+          + magnitude[i] + (magnitude[i + 1] ? '&ndash;' + magnitude[i + 1] : '+'))
+          +'</i> '
+          + '<br>';
+      }
+      div.innerHTML = labels.join("<br>");
+      return div;
+    };
+// add legend to map 
+    legend.addTo(myMap);
 
-    return div;
-};
-
-legend.addTo(myMap);
+});
 
 
 
